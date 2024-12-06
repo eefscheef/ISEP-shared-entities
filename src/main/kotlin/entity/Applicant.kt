@@ -9,6 +9,7 @@ open class Applicant(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long = 0,
     open var name: String = "",
+    open var email: String = "",
     open var status: ApplicantStatus = ApplicantStatus.not_started,
     open var score: Int? = null,
     open var preferredLanguage: String? = null,
