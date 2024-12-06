@@ -10,5 +10,5 @@ open class Assessment(
     open val sections: MutableList<Section> = mutableListOf(),
 
     @OneToMany(mappedBy = "assessment", cascade = [CascadeType.ALL], orphanRemoval = true)
-    open val invites: List<Invite> = listOf()
+    open val invites: MutableList<Invite> = mutableListOf()
 )
