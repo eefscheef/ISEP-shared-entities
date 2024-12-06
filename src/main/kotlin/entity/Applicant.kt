@@ -8,7 +8,9 @@ open class Applicant(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long = 0,
+    open var name: String = "",
     open var status: ApplicantStatus = ApplicantStatus.not_started,
+    open var score: Int? = null,
     open var preferredLanguage: String? = null,
 
     @OneToOne(mappedBy = "applicant", cascade = [CascadeType.ALL], orphanRemoval = true)
