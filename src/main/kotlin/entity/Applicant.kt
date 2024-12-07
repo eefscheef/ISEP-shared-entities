@@ -1,5 +1,6 @@
 package ut.isep.management.model.entity
 
+import entity.BaseEntity
 import enumerable.ApplicantStatus
 import jakarta.persistence.*
 
@@ -7,7 +8,7 @@ import jakarta.persistence.*
 open class Applicant(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Long = 0,
+    override val id: Long = 0,
     open var name: String = "",
     open var email: String = "",
     open var status: ApplicantStatus = ApplicantStatus.not_started,
@@ -16,4 +17,4 @@ open class Applicant(
 
     @OneToOne(mappedBy = "applicant", cascade = [CascadeType.ALL], orphanRemoval = true)
     open var invite: Invite? = null
-)
+) : BaseEntity<Long>
