@@ -8,6 +8,6 @@ import java.net.URI
 class AssignmentCoding(
     description: String = "",
     id: Long = 0,
-    val codeUri: URI = URI(""),
-    val language: String = "",
+    var codeUri: URI = URI(""),
+    var language: String = "",
 ) : Assignment(id, description)

@@ -1,12 +1,13 @@
 package ut.isep.management.model.entity
 
+import entity.BaseEntity
 import jakarta.persistence.*
 
 @Entity
 open class Section(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open val id: Long = 0,
-    open val title: String = "",
+    override val id: Long = 0,
+    open var title: String = "",
 
     @ManyToOne
     @JoinColumn(name = "assessment_id")
@@ -19,4 +20,4 @@ open class Section(
         inverseJoinColumns = [JoinColumn(name = "assignment_id")]
     )
     open val assignments: List<Assignment> = emptyList()
-)
+): BaseEntity<Long>

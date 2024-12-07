@@ -9,5 +9,5 @@ class AssignmentMultipleChoice(
     description: String = "",
     @ElementCollection
     val options: List<String> = listOf(),
-    val isMultipleAnswers: Boolean = false,
+    var isMultipleAnswers: Boolean = false,
 ) : Assignment(id, description)
