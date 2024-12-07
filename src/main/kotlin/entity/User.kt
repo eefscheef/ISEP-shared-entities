@@ -1,4 +1,4 @@
-package entity
+package ut.isep.management.model.entity
 
 import enumerable.UserRole
 import jakarta.persistence.*
