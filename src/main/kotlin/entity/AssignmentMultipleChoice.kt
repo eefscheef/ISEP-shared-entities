@@ -8,6 +8,5 @@ class AssignmentMultipleChoice(
     id: Long = 0,
     description: String = "",
     @ElementCollection
-    val options: List<String> = listOf(),
-    var isMultipleAnswers: Boolean = false,
+    val optionToSolution: Map<String, Boolean> = mapOf(),
 ) : Assignment(id, description)

@@ -7,4 +7,5 @@ import jakarta.persistence.*
 class AssignmentOpen(
     id: Long = 0,
     description: String = "",
+    val referenceSolution: String = "",
 ) : Assignment(id, description)

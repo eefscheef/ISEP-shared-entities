@@ -10,4 +10,5 @@ class AssignmentCoding(
     id: Long = 0,
     var codeUri: URI = URI(""),
     var language: String = "",
+    var referenceAnswer: String = "",
 ) : Assignment(id, description)
