@@ -1,6 +1,5 @@
 package ut.isep.management.model.entity
 
-import entity.*
 import jakarta.persistence.*
 import java.time.ZonedDateTime
 import java.util.*

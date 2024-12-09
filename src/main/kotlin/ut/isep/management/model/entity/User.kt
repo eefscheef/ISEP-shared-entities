@@ -1,6 +1,5 @@
 package ut.isep.management.model.entity
 
-import entity.BaseEntity
 import enumerable.UserRole
 import jakarta.persistence.*
 

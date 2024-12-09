@@ -1,6 +1,5 @@
 package ut.isep.management.model.entity
 
-import entity.BaseEntity
 import jakarta.persistence.*
 import java.io.Serializable
 import java.util.*
