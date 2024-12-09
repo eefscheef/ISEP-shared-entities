@@ -5,7 +5,8 @@ import jakarta.persistence.*
 @Entity
 @DiscriminatorValue("SOLVED_OPEN")
 open class SolvedAssignmentOpen(
-    id: Long = 0,
-    assignment: AssignmentOpen? = null,
+    id: SolvedAssignmentId = SolvedAssignmentId(),
+    invite: Invite? = null,
+    assignment: Assignment? = null,
     open var userSolution: String = "",
-) : SolvedAssignment(id, assignment)
+) : SolvedAssignment(id, invite, assignment)

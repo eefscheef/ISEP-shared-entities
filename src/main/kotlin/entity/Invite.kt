@@ -20,23 +20,31 @@ open class Invite(
     open var assessment: Assessment = Assessment(),
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "solution_id")
-    open var solutions: MutableList<SolvedAssignment> = emptySolvedAssignments(assessment),
+    @JoinColumn(name = "invite_id")
+    open var solutions: MutableList<SolvedAssignment> = mutableListOf(),
 
     open var invitedAt: ZonedDateTime = ZonedDateTime.now()
-) : BaseEntity<UUID>
+) : BaseEntity<UUID> {
+    fun initializeSolutions() {
+        solutions = assessment.sections.flatMap { section ->
+            section.assignments.map { createSolvedAssignment(it, this) }
+        }.toMutableList()
+    }
 
-private fun emptySolvedAssignments(assessment: Assessment): MutableList<SolvedAssignment> {
-    return assessment.sections.flatMap { section ->
-        section.assignments.map(::createSolvedAssignment)
-    }.toMutableList()
+    companion object {
+        fun createInvite(applicant: Applicant, assessment: Assessment): Invite {
+            val invite = Invite(applicant = applicant, assessment = assessment)
+            invite.initializeSolutions()
+            return invite
+        }
+    }
 }
 
-private fun createSolvedAssignment(assignment: Assignment): SolvedAssignment {
+private fun createSolvedAssignment(assignment: Assignment, invite: Invite): SolvedAssignment {
     return when (assignment) {
-        is AssignmentOpen -> SolvedAssignmentOpen(assignment = assignment)
-        is AssignmentCoding -> SolvedAssignmentCoding(assignment = assignment)
-        is AssignmentMultipleChoice -> SolvedAssignmentMultipleChoice(assignment = assignment)
+        is AssignmentOpen -> SolvedAssignmentOpen(assignment = assignment, invite = invite)
+        is AssignmentCoding -> SolvedAssignmentCoding(assignment = assignment, invite = invite)
+        is AssignmentMultipleChoice -> SolvedAssignmentMultipleChoice(assignment = assignment, invite = invite)
         else -> throw UnsupportedOperationException("Unsupported assignment type: ${assignment::class}")
     }
 }

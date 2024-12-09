@@ -5,8 +5,9 @@ import jakarta.persistence.*
 @Entity
 @DiscriminatorValue("SOLVED_MULTIPLE_CHOICE")
 open class SolvedAssignmentMultipleChoice(
-    id: Long = 0,
-    assignment: AssignmentMultipleChoice? = null,
+    id: SolvedAssignmentId = SolvedAssignmentId(),
+    invite: Invite? = null,
+    assignment: Assignment? = null,
     @ElementCollection
     open var userOptionsMarkedCorrect: List<Int> = listOf(),
-) : SolvedAssignment(id, assignment)
+) : SolvedAssignment(id, invite, assignment)
