@@ -1,7 +1,8 @@
 package ut.isep.management.model.entity
 
+import enumerable.InviteStatus
 import jakarta.persistence.*
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
@@ -10,7 +11,7 @@ open class Invite(
     @GeneratedValue(strategy = GenerationType.UUID)
     override val id: UUID = UUID.randomUUID(),
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "applicant_id")
     open var applicant: Applicant = Applicant(),
 
@@ -22,8 +23,12 @@ open class Invite(
     @JoinColumn(name = "invite_id")
     open var solutions: MutableList<SolvedAssignment> = mutableListOf(),
 
-    open var invitedAt: ZonedDateTime = ZonedDateTime.now()
-) : BaseEntity<UUID> {
+    open val invitedAt: OffsetDateTime = OffsetDateTime.now(),
+    open var expiresAt: OffsetDateTime = invitedAt.plusWeeks(1),
+
+    open var status: InviteStatus = InviteStatus.not_started,
+
+    ) : BaseEntity<UUID> {
     fun initializeSolutions() {
         solutions = assessment.sections.flatMap { section ->
             section.assignments.map { createSolvedAssignment(it, this) }
