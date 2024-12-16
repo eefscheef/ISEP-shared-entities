@@ -12,12 +12,12 @@ open class Invite(
     override val id: UUID = UUID.randomUUID(),
 
     @ManyToOne
-    @JoinColumn(name = "applicant_id")
-    open var applicant: Applicant = Applicant(),
+    @JoinColumn(name = "applicant_id", nullable = false)
+    open var applicant: Applicant? = null,
 
     @ManyToOne
-    @JoinColumn(name = "assessment_id")
-    open var assessment: Assessment = Assessment(),
+    @JoinColumn(name = "assessment_id", nullable = false)
+    open var assessment: Assessment? = null,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "invite_id")
@@ -30,7 +30,7 @@ open class Invite(
 
     ) : BaseEntity<UUID> {
     fun initializeSolutions() {
-        solutions = assessment.sections.flatMap { section ->
+        solutions = assessment!!.sections.flatMap { section ->
             section.assignments.map { createSolvedAssignment(it, this) }
         }.toMutableList()
     }

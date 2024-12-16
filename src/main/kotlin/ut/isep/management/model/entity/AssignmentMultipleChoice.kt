@@ -6,7 +6,7 @@ import jakarta.persistence.*
 @DiscriminatorValue("MULTIPLE_CHOICE")
 class AssignmentMultipleChoice(
     id: Long = 0,
-    description: String = "",
+    description: String? = null,
     @ElementCollection
     val optionToSolution: Map<String, Boolean> = mapOf(),
 ) : Assignment(id, description)

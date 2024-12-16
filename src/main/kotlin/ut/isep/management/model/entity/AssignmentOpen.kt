@@ -6,6 +6,6 @@ import jakarta.persistence.*
 @DiscriminatorValue("OPEN")
 class AssignmentOpen(
     id: Long = 0,
-    description: String = "",
-    val referenceSolution: String = "",
+    description: String? = null,
+    val referenceSolution: String? = null,
 ) : Assignment(id, description)

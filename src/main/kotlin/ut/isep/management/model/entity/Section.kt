@@ -6,10 +6,11 @@ import jakarta.persistence.*
 open class Section(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: Long = 0,
-    open var title: String = "",
+    @Column(nullable = false)
+    open var title: String? = null,
 
     @ManyToOne
-    @JoinColumn(name = "assessment_id")
+    @JoinColumn(name = "assessment_id", nullable = false)
     open var assessment: Assessment? = null,
 
     @ManyToMany(cascade = [CascadeType.ALL])

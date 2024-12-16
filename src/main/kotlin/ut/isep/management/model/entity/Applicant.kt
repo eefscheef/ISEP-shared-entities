@@ -7,8 +7,10 @@ open class Applicant(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: Long = 0,
-    open var name: String = "",
-    open var email: String = "",
+    @Column(nullable = false)
+    open var name: String? = null,
+    @Column(nullable = false)
+    open var email: String? = null,
     open var score: Int? = null,
     open var preferredLanguage: String? = null,
 

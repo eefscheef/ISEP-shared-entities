@@ -6,9 +6,15 @@ import java.net.URI
 @Entity
 @DiscriminatorValue("CODING")
 class AssignmentCoding(
-    description: String = "",
+    description: String? = null,
     id: Long = 0,
-    var codeUri: URI = URI(""),
-    var language: String = "",
-    var referenceAnswer: String = "",
+
+    @Column(nullable = false)
+    var codeUri: URI? = null,
+
+    @Column(nullable = false)
+    var language: String? = null,
+
+    @Column(nullable = false)
+    var referenceAnswer: String? = null,
 ) : Assignment(id, description)

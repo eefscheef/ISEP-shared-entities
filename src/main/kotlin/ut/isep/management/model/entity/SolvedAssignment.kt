@@ -19,7 +19,7 @@ import java.util.*
 
         @OneToOne(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
         @MapsId("assignmentId")
-        @JoinColumn(name = "assignment_id")
+        @JoinColumn(name = "assignment_id", nullable = false)
         open val assignment: Assignment? = null
     ) : BaseEntity<SolvedAssignmentId>
 

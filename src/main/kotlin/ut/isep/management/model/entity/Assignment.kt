@@ -8,5 +8,6 @@ import jakarta.persistence.*
 abstract class Assignment protected constructor(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: Long = 0,
-    open var description: String = "",
+    @Column(nullable = false)
+    open var description: String? = null,
 ) : BaseEntity<Long>
