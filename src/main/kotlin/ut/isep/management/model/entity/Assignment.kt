@@ -10,4 +10,6 @@ abstract class Assignment protected constructor(
     override val id: Long = 0,
     @Column(nullable = false)
     open var description: String? = null,
+    @Column(nullable = false)
+    open var availablePoints: Int? = null,
 ) : BaseEntity<Long>
