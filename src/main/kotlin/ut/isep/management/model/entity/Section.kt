@@ -19,5 +19,8 @@ open class Section(
         joinColumns = [JoinColumn(name = "section_id")],
         inverseJoinColumns = [JoinColumn(name = "assignment_id")]
     )
-    open val assignments: List<Assignment> = emptyList()
+    open val assignments: List<Assignment> = emptyList(),
+
+    @Column(nullable = false)
+    open val availablePoints: Int = assignments.sumOf {it.availablePoints!!}
 ): BaseEntity<Long>

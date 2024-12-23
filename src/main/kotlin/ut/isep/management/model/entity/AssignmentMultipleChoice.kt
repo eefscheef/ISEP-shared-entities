@@ -7,6 +7,7 @@ import jakarta.persistence.*
 class AssignmentMultipleChoice(
     id: Long = 0,
     description: String? = null,
+    availablePoints: Int? = null,
     @ElementCollection
     val optionToSolution: Map<String, Boolean> = mapOf(),
-) : Assignment(id, description)
+) : Assignment(id, description, availablePoints)

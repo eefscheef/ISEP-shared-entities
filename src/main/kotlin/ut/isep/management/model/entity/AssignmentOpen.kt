@@ -7,5 +7,6 @@ import jakarta.persistence.*
 class AssignmentOpen(
     id: Long = 0,
     description: String? = null,
-    val referenceSolution: String? = null,
-) : Assignment(id, description)
+    availablePoints: Int? = null,
+    val referenceAnswer: String? = null,
+) : Assignment(id, description, availablePoints)
