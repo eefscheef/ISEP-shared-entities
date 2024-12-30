@@ -10,6 +10,7 @@ import java.net.URI
 class AssignmentCoding(
     description: String? = null,
     id: Long = 0,
+    availablePoints: Int? = null,
 
     @Column(nullable = true)
     var codeUri: URI? = null,
@@ -19,4 +20,4 @@ class AssignmentCoding(
 
     @Column(nullable = true)
     var referenceAnswer: String? = null,
-) : Assignment(id, description)
+) : Assignment(id, description, availablePoints)

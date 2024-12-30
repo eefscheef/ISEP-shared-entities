@@ -14,5 +14,8 @@ open class Assessment(
     open val sections: MutableList<Section> = mutableListOf(),
 
     @OneToMany(mappedBy = "assessment", cascade = [CascadeType.ALL], orphanRemoval = true)
-    open val invites: MutableList<Invite> = mutableListOf()
+    open val invites: MutableList<Invite> = mutableListOf(),
+
+    @Column(nullable = false)
+    open val availablePoints: Int = sections.sumOf {it.availablePoints}
 ): BaseEntity<Long>
