@@ -45,10 +45,10 @@ open class Invite(
 }
 
 private fun createSolvedAssignment(assignment: Assignment, invite: Invite): SolvedAssignment {
-    return when (assignment) {
-        is AssignmentOpen -> SolvedAssignmentOpen(assignment = assignment, invite = invite)
-        is AssignmentCoding -> SolvedAssignmentCoding(assignment = assignment, invite = invite)
-        is AssignmentMultipleChoice -> SolvedAssignmentMultipleChoice(assignment = assignment, invite = invite)
+    return when (assignment.assignmentType) {
+        AssignmentType.OPEN -> SolvedAssignmentOpen(assignment = assignment, invite = invite)
+        AssignmentType.CODING -> SolvedAssignmentCoding(assignment = assignment, invite = invite)
+        AssignmentType.MULTIPLE_CHOICE -> SolvedAssignmentMultipleChoice(assignment = assignment, invite = invite)
         else -> throw UnsupportedOperationException("Unsupported assignment type: ${assignment::class}")
     }
 }

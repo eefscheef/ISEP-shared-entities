@@ -1,15 +1,30 @@
 package ut.isep.management.model.entity
 
 import jakarta.persistence.*
+import java.util.*
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "assignment_type", discriminatorType = DiscriminatorType.STRING)
-abstract class Assignment protected constructor(
+open class Assignment(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: Long = 0,
     @Column(nullable = false)
-    open var description: String? = null,
+    val filePath: String? = null,
+    @Column(nullable= false)
+    @Enumerated
+    val assignmentType: AssignmentType? = null,
     @Column(nullable = false)
-    open var availablePoints: Int? = null,
+    val availablePoints: Int? = null
 ) : BaseEntity<Long>
+
+enum class AssignmentType(val type: String) {
+    CODING("coding"),
+    MULTIPLE_CHOICE("multiple-choice"),
+    OPEN("open");
+
+    companion object {
+        fun fromString(type: String): AssignmentType {
+            return entries.find { it.type == type.lowercase(Locale.getDefault()) }
+                ?: throw IllegalArgumentException("Unknown question type: $type")
+        }
+    }
+}
