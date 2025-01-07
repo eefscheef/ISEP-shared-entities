@@ -6,15 +6,37 @@ import java.util.*
 @Entity
 open class Assignment(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long = 0,
+    override var id: Long = 0,
     @Column(nullable = false)
     val filePath: String? = null,
-    @Column(nullable= false)
+    @Column(nullable = false)
     @Enumerated
     val assignmentType: AssignmentType? = null,
     @Column(nullable = false)
-    val availablePoints: Int? = null
-) : BaseEntity<Long>
+    val availablePoints: Int? = null,
+
+    @ManyToMany
+    @JoinColumn(name = "section_id", nullable = false)
+    open val sections: MutableList<Section> = mutableListOf()
+) : BaseEntity<Long> {
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Assignment) return false
+
+        return id == other.id &&
+                assignmentType == other.assignmentType &&
+                filePath == other.filePath &&
+                availablePoints == other.availablePoints
+    }
+
+    override fun hashCode(): Int {
+        return listOf(id, filePath, assignmentType, availablePoints).hashCode()
+    }
+
+
+}
 
 enum class AssignmentType(val type: String) {
     CODING("coding"),

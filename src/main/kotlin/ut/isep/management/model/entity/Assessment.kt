@@ -14,9 +14,27 @@ open class Assessment(
     @OneToMany(mappedBy = "assessment", cascade = [CascadeType.ALL], orphanRemoval = true)
     open val invites: MutableList<Invite> = mutableListOf(),
 
-    @Column(nullable = false)
-    open val availablePoints: Int = sections.sumOf {it.availablePoints}
-): BaseEntity<AssessmentID>
+    open var latest: Boolean = false
+
+): BaseEntity<AssessmentID> {
+    val availablePoints: Int
+        get() = sections.sumOf { it.availablePoints }
+
+    fun addSection(section: Section) {
+        if (!sections.contains(section)) {
+            sections.add(section)
+            section.assessment = this
+        }
+    }
+
+    fun removeSection(section: Section) {
+        if (sections.contains(section)) {
+            sections.remove(section)
+            section.assessment = null
+        }
+    }
+
+}
 
 @Embeddable
 data class AssessmentID(
