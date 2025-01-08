@@ -1,6 +1,7 @@
 package ut.isep.management.model.entity
 
 import jakarta.persistence.*
+import java.io.File
 import java.util.*
 
 @Entity
@@ -15,11 +16,13 @@ open class Assignment(
     @Column(nullable = false)
     val availablePoints: Int? = null,
 
-    @ManyToMany
-    @JoinColumn(name = "section_id", nullable = false)
+    @ManyToMany(mappedBy = "assignments")
     open val sections: MutableList<Section> = mutableListOf()
 ) : BaseEntity<Long> {
 
+    val sectionTitle: String
+        get() = filePath?.let { File(it).parent }
+            ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $filePath")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -34,8 +37,6 @@ open class Assignment(
     override fun hashCode(): Int {
         return listOf(id, filePath, assignmentType, availablePoints).hashCode()
     }
-
-
 }
 
 enum class AssignmentType(val type: String) {

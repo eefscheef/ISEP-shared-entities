@@ -10,7 +10,10 @@ open class Section(
     open var title: String? = null,
 
     @ManyToOne
-    @JoinColumn(name = "assessment_id", nullable = false)
+    @JoinColumns(
+        JoinColumn(name = "assessment_tag", referencedColumnName = "tag", nullable = false),
+        JoinColumn(name = "assessment_gitCommitHash", referencedColumnName = "gitCommitHash", nullable = false)
+    )
     open var assessment: Assessment? = null,
 
     @ManyToMany(cascade = [CascadeType.ALL])
@@ -19,27 +22,26 @@ open class Section(
         joinColumns = [JoinColumn(name = "section_id")],
         inverseJoinColumns = [JoinColumn(name = "assignment_id")]
     )
-    open val assignments: MutableList<Assignment> = mutableListOf(),
-
-): BaseEntity<Long> {
+    open val assignments: MutableList<Assignment> = mutableListOf()
+) : BaseEntity<Long> {
 
     val availablePoints: Int
         get() = assignments.sumOf {
-            it.availablePoints ?: throw IllegalStateException("Some assignments of this section have null availablePoints")
+            it.availablePoints
+                ?: throw IllegalStateException("Some assignments of this section have null availablePoints")
         }
 
     fun addAssignment(assignment: Assignment) {
         if (!assignments.contains(assignment)) {
             assignments.add(assignment)
-            assignment.assessment.add(assessment ?: throw IllegalStateException("Cannot add assignments to Sections with no Assessment of this section have null availablePoints"))
+            assignment.sections.add(this)
         }
     }
 
     fun removeAssignment(assignment: Assignment) {
         if (assignments.contains(assignment)) {
             assignments.remove(assignment)
-            assignment.assessment.remove(assessment)
+            assignment.sections.remove(this)
         }
     }
-
 }
