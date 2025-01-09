@@ -12,7 +12,7 @@ abstract class SolvedAssignment(
     @EmbeddedId
     override val id: SolvedAssignmentId = SolvedAssignmentId(),
 
-    @ManyToOne(cascade = [CascadeType.PERSIST])
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("inviteId") // Links inviteId to the Invite entity
     @JoinColumn(name = "invite_id")
     open var invite: Invite? = null,
@@ -28,6 +28,6 @@ abstract class SolvedAssignment(
 
 @Embeddable
 data class SolvedAssignmentId(
-    val inviteId: UUID = UUID(0,0),
+    val inviteId: UUID = UUID(0, 0),
     val assignmentId: Long = 0
 ) : Serializable

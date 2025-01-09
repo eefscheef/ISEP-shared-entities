@@ -19,8 +19,7 @@ open class Invite(
     @JoinColumn(name = "assessment_id", nullable = false)
     open var assessment: Assessment? = null,
 
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "invite_id")
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "invite")
     open var solutions: MutableList<SolvedAssignment> = mutableListOf(),
 
     open val invitedAt: OffsetDateTime = OffsetDateTime.now(),
