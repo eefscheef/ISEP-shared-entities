@@ -36,8 +36,12 @@ open class Invite(
     }
 
     companion object {
-        fun createInvite(applicant: Applicant, assessment: Assessment): Invite {
-            val invite = Invite(applicant = applicant, assessment = assessment)
+        fun createInvite(applicant: Applicant, assessment: Assessment, expiresAt: OffsetDateTime? = null): Invite {
+            val invite: Invite = if (expiresAt != null) {
+                Invite(applicant = applicant, assessment = assessment, expiresAt = expiresAt)
+            } else {
+                Invite(applicant = applicant, assessment = assessment)
+            }
             invite.initializeSolutions()
             return invite
         }
