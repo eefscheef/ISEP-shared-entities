@@ -23,7 +23,7 @@ abstract class SolvedAssignment(
     open val assignment: Assignment? = null,
 
     @Column(nullable = true)
-    open val scoredPoints: Int? = null
+    open var scoredPoints: Int? = null
 ) : BaseEntity<SolvedAssignmentId>
 
 @Embeddable
