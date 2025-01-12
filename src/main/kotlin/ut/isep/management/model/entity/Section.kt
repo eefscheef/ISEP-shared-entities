@@ -22,5 +22,8 @@ open class Section(
     open val assignments: List<Assignment> = emptyList(),
 
     @Column(nullable = false)
-    open val availablePoints: Int = assignments.sumOf {it.availablePoints!!}
-): BaseEntity<Long>
+    open val availablePoints: Int = assignments.sumOf { it.availablePoints!! },
+
+    @Column(nullable = false)
+    open val availableSeconds: Long = assignments.sumOf { it.availableSeconds!! }
+) : BaseEntity<Long>

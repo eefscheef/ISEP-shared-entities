@@ -17,5 +17,8 @@ open class Assessment(
     open val invites: MutableList<Invite> = mutableListOf(),
 
     @Column(nullable = false)
-    open val availablePoints: Int = sections.sumOf {it.availablePoints}
-): BaseEntity<Long>
+    open val availablePoints: Int = sections.sumOf { it.availablePoints },
+
+    @Column(nullable = false)
+    open val availableSeconds: Long = sections.sumOf { it.availableSeconds },
+) : BaseEntity<Long>

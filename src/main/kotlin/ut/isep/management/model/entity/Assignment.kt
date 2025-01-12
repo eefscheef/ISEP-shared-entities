@@ -12,4 +12,6 @@ abstract class Assignment protected constructor(
     open var description: String? = null,
     @Column(nullable = false)
     open var availablePoints: Int? = null,
+    @Column(nullable = false)
+    open var availableSeconds: Long? = null,
 ) : BaseEntity<Long>
