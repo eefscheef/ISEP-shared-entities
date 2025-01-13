@@ -23,9 +23,6 @@ abstract class SolvedAssignment(
     open val assignment: Assignment? = null,
 
     @Column(nullable = true)
-    open var measuredSeconds: Long? = null,
-
-    @Column(nullable = true)
     open var scoredPoints: Int? = null
 ) : BaseEntity<SolvedAssignmentId>
 
