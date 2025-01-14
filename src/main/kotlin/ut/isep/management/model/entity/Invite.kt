@@ -24,6 +24,11 @@ open class Invite(
 
     open val invitedAt: OffsetDateTime = OffsetDateTime.now(),
     open var expiresAt: OffsetDateTime = invitedAt.plusWeeks(1),
+    open var assessmentStartedAt: OffsetDateTime? = null,
+    open var assessmentFinishedAt: OffsetDateTime? = null,
+
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "invite")
+    open var measuredSecondsPerSection: MutableList<TimingPerSection> = mutableListOf(),
 
     open var status: InviteStatus = InviteStatus.not_started,
 
@@ -31,6 +36,12 @@ open class Invite(
     fun initializeSolutions() {
         solutions = assessment!!.sections.flatMap { section ->
             section.assignments.map { createSolvedAssignment(it, this) }
+        }.toMutableList()
+    }
+
+    fun initializeMeasuredSecondsPerSection() {
+        measuredSecondsPerSection = assessment!!.sections.map { section ->
+            createMeasuredTimeSection(section, this)
         }.toMutableList()
     }
 
@@ -42,6 +53,7 @@ open class Invite(
                 Invite(applicant = applicant, assessment = assessment)
             }
             invite.initializeSolutions()
+            invite.initializeMeasuredSecondsPerSection()
             return invite
         }
     }
@@ -54,4 +66,8 @@ private fun createSolvedAssignment(assignment: Assignment, invite: Invite): Solv
         is AssignmentMultipleChoice -> SolvedAssignmentMultipleChoice(assignment = assignment, invite = invite)
         else -> throw UnsupportedOperationException("Unsupported assignment type: ${assignment::class}")
     }
+}
+
+private fun createMeasuredTimeSection(section: Section, invite: Invite): TimingPerSection {
+    return TimingPerSection(section = section, invite = invite)
 }
