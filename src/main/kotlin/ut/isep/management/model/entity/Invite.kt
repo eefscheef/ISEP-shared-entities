@@ -3,6 +3,7 @@ package ut.isep.management.model.entity
 import enumerable.InviteStatus
 import jakarta.persistence.*
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 @Entity
@@ -22,8 +23,8 @@ open class Invite(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "invite")
     open var solutions: MutableList<SolvedAssignment> = mutableListOf(),
 
-    open val invitedAt: OffsetDateTime = OffsetDateTime.now(),
-    open var expiresAt: OffsetDateTime = invitedAt.plusWeeks(1),
+    open val invitedAt: OffsetDateTime = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC),
+    open var expiresAt: OffsetDateTime = invitedAt.plusWeeks(1).withHour(23).withMinute(59).withSecond(59).withNano(0),
     open var assessmentStartedAt: OffsetDateTime? = null,
     open var assessmentFinishedAt: OffsetDateTime? = null,
 
