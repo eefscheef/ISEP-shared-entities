@@ -37,11 +37,10 @@ open class Section(
             assignment.sections.add(this)
         }
     }
-
-    fun removeAssignment(assignment: Assignment) {
-        if (assignments.contains(assignment)) {
-            assignments.remove(assignment)
-            assignment.sections.remove(this)
+    fun removeAssignmentById(assignmentId: Long) {
+        val removed = assignments.removeIf { it.id == assignmentId }
+        if (!removed) {
+            throw IllegalArgumentException("Assignment with ID $assignmentId not found.")
         }
     }
 }
