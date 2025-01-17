@@ -9,20 +9,22 @@ open class Assignment(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Long = 0,
     @Column(nullable = false)
-    val filePath: String? = null,
+    val baseFilePath: String? = null,
     @Column(nullable = false)
     @Enumerated
     val assignmentType: AssignmentType? = null,
     @Column(nullable = false)
     val availablePoints: Int? = null,
-
-    @ManyToMany(mappedBy = "assignments")
-    open val sections: MutableList<Section> = mutableListOf()
 ) : BaseEntity<Long> {
 
     val sectionTitle: String
-        get() = filePath?.let { File(it).parent }
-            ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $filePath")
+        get() = File(baseFilePath!!).parent
+            ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $baseFilePath")
+
+    val filePathWithId: String
+        get() = if (id == 0L) throw IllegalStateException() else
+            // TODO() replace with call to QuestionIDUtil.injectQuestionID
+            baseFilePath!!.substringBeforeLast(".md") + "_qid$id.md"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -30,12 +32,12 @@ open class Assignment(
 
         return id == other.id &&
                 assignmentType == other.assignmentType &&
-                filePath == other.filePath &&
+                baseFilePath == other.baseFilePath &&
                 availablePoints == other.availablePoints
     }
 
     override fun hashCode(): Int {
-        return listOf(id, filePath, assignmentType, availablePoints).hashCode()
+        return listOf(id, baseFilePath, assignmentType, availablePoints).hashCode()
     }
 }
 
