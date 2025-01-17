@@ -34,7 +34,8 @@ open class Section(
     fun addAssignment(assignment: Assignment) {
         if (!assignments.contains(assignment)) {
             assignments.add(assignment)
-            assignment.sections.add(this)
+        } else {
+            throw IllegalArgumentException("Assignment with ID ${assignment.id} is already present in the section.")
         }
     }
     fun removeAssignmentById(assignmentId: Long) {
