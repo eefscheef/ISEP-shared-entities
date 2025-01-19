@@ -8,5 +8,7 @@ open class SolvedAssignmentCoding(
     id: SolvedAssignmentId = SolvedAssignmentId(),
     invite: Invite? = null,
     assignment: Assignment? = null,
+
+    @Column(columnDefinition = "text")
     open var userCode: String = "",
 ) : SolvedAssignment(id, invite, assignment)
