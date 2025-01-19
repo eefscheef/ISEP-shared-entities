@@ -12,6 +12,6 @@ open class SolvedAssignmentCoding(
     @Column(columnDefinition = "text")
     open var userCode: String = "",
 
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "solvedAssignmentCoding")
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "solvedAssignmentCoding")
     open var testResults: MutableList<TestResult> = mutableListOf(),
 ) : SolvedAssignment(id, invite, assignment)
