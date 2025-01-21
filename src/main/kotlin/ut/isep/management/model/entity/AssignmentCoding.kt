@@ -19,6 +19,9 @@ class AssignmentCoding(
     @Column(nullable = true)
     var language: String? = null,
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "text")
+    var startingCode: String? = null,
+
+    @Column(nullable = true, columnDefinition = "text")
     var referenceAnswer: String? = null,
 ) : Assignment(id, description, availablePoints, availableSeconds)
