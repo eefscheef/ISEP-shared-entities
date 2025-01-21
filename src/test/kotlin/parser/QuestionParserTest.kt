@@ -1,20 +1,130 @@
 package parser
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import parser.question.MultipleChoiceQuestion
 import parser.question.OpenQuestion
 import java.io.StringReader
+import java.nio.file.Path
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class QuestionParserTest {
 
-    private val parser = QuestionParser(
-        Config(
-            tagOptions = listOf("Frontend Developer", "Backend Developer", "System Design", "Deezveloper"),
+    @TempDir
+    lateinit var tempDir: Path
+
+    private lateinit var parser: QuestionParser
+
+    @BeforeEach
+    fun setUp() {
+        val config = Config(
+            tagOptions = listOf("Frontend Developer", "Backend Developer", "System Design", "Deezveloper", "Java"),
             questionOptions = listOf("multiple-choice", "open")
         )
-    )
+        parser = QuestionParser(config)
+    }
+
+    @Test
+    fun `test successfully parsing a coding question directory`() {
+        // Arrange: create tempdir with coding question files
+        val mdFile = tempDir.resolve("description.md").toFile().apply {
+            writeText("""
+                ---
+                type: coding
+                tags:
+                  - Backend Developer
+                  - Java
+                code: HelloWorld.java
+                test: HelloWorldTest.java
+                secret-test: HelloWorldSecretTest.java
+                ---
+                This is a description for a coding question.
+            """.trimIndent())
+        }
+        val code = "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello World\"); } }"
+        tempDir.resolve("HelloWorld.java").toFile().apply {
+            writeText(code)
+        }
+        val testCode = "public class HelloWorldTest { /* Test code here */ }"
+        tempDir.resolve("HelloWorldTest.java").toFile().apply {
+            writeText(testCode)
+        }
+        val secretTestCode = "public class HelloWorldSecretTest { /* Secret test code here */ }"
+        tempDir.resolve("HelloWorldSecretTest.java").toFile().apply {
+            writeText(secretTestCode)
+        }
+
+        // Act: Parse the coding question dir
+        val codingQuestion = parser.parseCodingDirectory(mdFile.parentFile)
+
+        // Assert the parsed data equals the written data
+        assertEquals("This is a description for a coding question.", codingQuestion.description)
+        assertEquals(2, codingQuestion.tags.size)
+        assertEquals("HelloWorld.java", codingQuestion.code.filename)
+        assertEquals(code, codingQuestion.code.code)
+        assertEquals("HelloWorldTest.java", codingQuestion.testCode.filename)
+        assertEquals(testCode, codingQuestion.testCode.code)
+        assertEquals("HelloWorldSecretTest.java", codingQuestion.secretTestCode.filename)
+        assertEquals(secretTestCode, codingQuestion.secretTestCode.code)
+    }
+
+    @Test
+    fun `test failure when there are multiple markdown files`() {
+        // Arrange multiple markdown files in a single coding dir
+        val mdFile1 = tempDir.resolve("description1.md").toFile().apply {
+            writeText("""
+                ---
+                type: coding
+                tags:
+                  - Backend Developer
+                code: HelloWorld.java
+                test: HelloWorldTest.java
+                secret-test: HelloWorldSecretTest.java
+                ---
+                First description.
+            """.trimIndent())
+        }
+        val mdFile2 = tempDir.resolve("description2.md").toFile().apply {
+            writeText("""
+                ---
+                type: coding
+                tags:
+                  - Backend Developer
+                code: HelloWorld.java
+                test: HelloWorldTest.java
+                secret-test: HelloWorldSecretTest.java
+                ---
+                Second description.
+            """.trimIndent())
+        }
+
+        // Assert failure when parsing this as a coding question
+        assertFailsWith<QuestionParsingException> {
+            parser.parseCodingDirectory(mdFile1.parentFile)
+        }
+    }
+
+    @Test
+    fun `test failure when there are no markdown files`() {
+        // Arrange a coding question directory without markdown filnes
+        val codeFile = tempDir.resolve("HelloWorld.java").toFile().apply {
+            writeText("public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello World\"); } }")
+        }
+        tempDir.resolve("HelloWorldTest.java").toFile().apply {
+            writeText("public class HelloWorldTest { /* Test code here */ }")
+        }
+        tempDir.resolve("HelloWorldSecretTest.java").toFile().apply {
+            writeText("public class HelloWorldSecretTest { /* Secret test code here */ }")
+        }
+
+        // Assert an error is thrown
+        assertFailsWith<QuestionParsingException> {
+            parser.parseCodingDirectory(codeFile.parentFile)
+        }
+    }
 
     @Test
     fun `test parsing single answer multiple-choice question`() {
