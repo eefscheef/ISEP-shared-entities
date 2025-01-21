@@ -3,7 +3,6 @@ package parser
 import parser.question.*
 import ut.isep.management.model.entity.AssignmentType
 import java.io.File
-import java.io.FileInputStream
 
 
 class QuestionParser(
@@ -15,8 +14,8 @@ class QuestionParser(
      */
     fun parseFile(questionFile: File): Question {
         try {
-            val br = FileInputStream(questionFile).bufferedReader()
-            val (metadata, body) = frontmatterParser.parse(br, questionFile.path)
+            val content = questionFile.readText()
+            val (metadata, body) = frontmatterParser.parse(content, questionFile.path)
             return when (metadata.type) {
                 AssignmentType.MULTIPLE_CHOICE -> parseMultipleChoiceQuestion(body, metadata)
                 AssignmentType.OPEN -> parseOpenQuestion(body, metadata)
@@ -51,7 +50,6 @@ class QuestionParser(
 
     fun parseCodingQuestion(code: CodingFile, test: CodingFile, secretTest: CodingFile, body: String, metadata: Frontmatter): CodingQuestion {
         try {
-
             return CodingQuestion(
                 id = metadata.id,
                 tags = metadata.tags,

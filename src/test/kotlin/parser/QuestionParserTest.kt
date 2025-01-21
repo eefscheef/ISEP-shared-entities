@@ -6,7 +6,6 @@ import org.junit.jupiter.api.io.TempDir
 import parser.question.CodingQuestion
 import parser.question.MultipleChoiceQuestion
 import parser.question.OpenQuestion
-import java.io.StringReader
 import java.nio.file.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -21,11 +20,7 @@ class QuestionParserTest {
 
     @BeforeEach
     fun setUp() {
-        val config = Config(
-            tagOptions = listOf("Frontend Developer", "Backend Developer", "System Design", "Deezveloper", "Java"),
-            questionOptions = listOf("multiple-choice", "open")
-        )
-        parser = QuestionParser(config)
+        parser = QuestionParser()
     }
 
     @Test
@@ -88,7 +83,7 @@ class QuestionParserTest {
                 First description.
             """.trimIndent())
         }
-        val mdFile2 = tempDir.resolve("description2.md").toFile().apply {
+        tempDir.resolve("description2.md").toFile().apply {
             writeText("""
                 ---
                 type: coding
