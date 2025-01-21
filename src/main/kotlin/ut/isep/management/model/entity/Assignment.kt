@@ -1,5 +1,6 @@
 package ut.isep.management.model.entity
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import parser.QuestionIDUtil
 import java.io.File
@@ -42,15 +43,11 @@ open class Assignment(
     }
 }
 
-enum class AssignmentType(val type: String) {
-    CODING("coding"),
-    MULTIPLE_CHOICE("multiple-choice"),
-    OPEN("open");
-
-    companion object {
-        fun fromString(type: String): AssignmentType {
-            return entries.find { it.type == type.lowercase(Locale.getDefault()) }
-                ?: throw IllegalArgumentException("Unknown question type: $type")
-        }
-    }
+enum class AssignmentType {
+    @JsonProperty("coding")
+    CODING,
+    @JsonProperty("multiple-choice")
+    MULTIPLE_CHOICE,
+    @JsonProperty("open")
+    OPEN;
 }
