@@ -4,7 +4,6 @@ import parser.question.*
 import ut.isep.management.model.entity.AssignmentType
 import java.io.File
 import java.io.FileInputStream
-import java.io.Reader
 
 
 class QuestionParser(
@@ -15,64 +14,65 @@ class QuestionParser(
     /**
      * @throws QuestionParsingException
      */
-    fun parse(input: Reader, filePath: String): Question {
+    fun parseFile(questionFile: File): Question {
         try {
-            val (metadata, body) = frontmatterParser.parse(input, filePath)
+            val br = FileInputStream(questionFile).bufferedReader()
+            val (metadata, body) = frontmatterParser.parse(br, questionFile.path)
             return when (metadata.type) {
                 AssignmentType.MULTIPLE_CHOICE -> parseMultipleChoiceQuestion(body, metadata)
                 AssignmentType.OPEN -> parseOpenQuestion(body, metadata)
-                AssignmentType.CODING -> throw QuestionParsingException(
-                    message = "Trying to parse coding question in theoretical questions directory.",
-                    context = "Input: $filePath\n",
-                )
+                AssignmentType.CODING -> {
+                    val (code, test, secretTest) = parseCodingDir(questionFile.parentFile, metadata)
+                    parseCodingQuestion(code, test, secretTest, body, metadata)
+                }
             }
         } catch (e: Exception) {
             throw QuestionParsingException(
                 message = "Failed to parse question.",
-                context = "Input: ${filePath}\nError: ${e.message}",
+                context = "Input: ${questionFile.path}\nError: ${e.message}",
                 cause = e
             )
         }
     }
 
-    fun parseCodingDirectory(directory: File): CodingQuestion {
+    private fun parseCodingDir(codingDir: File, metadata: Frontmatter): Triple<CodingFile, CodingFile, CodingFile> {
+        val mdFiles: Array<File>? = codingDir.listFiles { file -> file.extension == "md" }
+        requireNotNull(mdFiles) {
+            "Failed to list files in directory: ${codingDir.absolutePath}"
+        }
+        require(mdFiles.size == 1) {
+            "Must provide exactly one description markdown file per coding question directory. Found ${mdFiles.size} files."
+        }
+        val codeFile = CodingFile(metadata.codeFilename!!, codingDir.resolve(metadata.codeFilename).readText())
+        val testFile = CodingFile(metadata.testFilename!!, codingDir.resolve(metadata.testFilename).readText())
+        val secretTestFile =
+            CodingFile(metadata.secretTestFilename!!, codingDir.resolve(metadata.secretTestFilename).readText())
+        return Triple(codeFile, testFile, secretTestFile)
+    }
+
+    fun parseCodingQuestion(code: CodingFile, test: CodingFile, secretTest: CodingFile, body: String, metadata: Frontmatter): CodingQuestion {
         try {
-            val mdFiles: Array<File>? = directory.listFiles { file -> file.extension == "md" }
-            requireNotNull(mdFiles) {
-                "Failed to list files in directory: ${directory.absolutePath}"
-            }
-            require(mdFiles.size == 1) {
-                "Must provide exactly one description markdown file per coding question directory. Found ${mdFiles.size} files."
-            }
-            val mdFile: File = mdFiles[0]
-            FileInputStream(mdFile).bufferedReader().use { br ->
-                val (metadata, body) = frontmatterParser.parse(br, mdFile.name)
-                val codeFile = CodingFile(metadata.codeFilename!!, directory.resolve(metadata.codeFilename).readText())
-                val testFile = CodingFile(metadata.testFilename!!, directory.resolve(metadata.testFilename).readText())
-                val secretTestFile =
-                    CodingFile(metadata.secretTestFilename!!, directory.resolve(metadata.secretTestFilename).readText())
-                return CodingQuestion(
-                    id = metadata.id,
-                    tags = metadata.tags,
-                    filePath = metadata.originalFilePath,
-                    description = body,
-                    code = codeFile,
-                    testCode = testFile,
-                    secretTestCode = secretTestFile
-                )
-            }
+
+            return CodingQuestion(
+                id = metadata.id,
+                tags = metadata.tags,
+                filePath = metadata.originalFilePath,
+                description = body,
+                code = code,
+                testCode = test,
+                secretTestCode = secretTest
+            )
         } catch (e: Exception) {
             throw QuestionParsingException(
                 message = "Failed to parse question.",
-                context = "Input: ${directory.path}\nError: ${e.message}",
+                context = "Input: ${metadata.originalFilePath}\nError: ${e.message}",
                 cause = e
             )
         }
     }
-
 
     // Parsing logic for question types remains unchanged
-    private fun parseMultipleChoiceQuestion(body: String, metadata: Frontmatter): MultipleChoiceQuestion {
+    fun parseMultipleChoiceQuestion(body: String, metadata: Frontmatter): MultipleChoiceQuestion {
         val descriptionRegex = """^(.*?)(?=\n- |\$)""".toRegex(RegexOption.DOT_MATCHES_ALL)
         val optionsRegex = """-\s*\[([xX ])]\s*(.*?)\s*$""".toRegex(RegexOption.MULTILINE)
 
@@ -94,7 +94,7 @@ class QuestionParser(
         )
     }
 
-    private fun parseOpenQuestion(body: String, metadata: Frontmatter): OpenQuestion {
+    fun parseOpenQuestion(body: String, metadata: Frontmatter): OpenQuestion {
         return OpenQuestion(
             id = metadata.id,
             tags = metadata.tags,

@@ -3,6 +3,7 @@ package parser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import parser.question.CodingQuestion
 import parser.question.MultipleChoiceQuestion
 import parser.question.OpenQuestion
 import java.io.StringReader
@@ -58,7 +59,7 @@ class QuestionParserTest {
         }
 
         // Act: Parse the coding question dir
-        val codingQuestion = parser.parseCodingDirectory(mdFile.parentFile)
+        val codingQuestion = parser.parseFile(mdFile) as CodingQuestion
 
         // Assert the parsed data equals the written data
         assertEquals("This is a description for a coding question.", codingQuestion.description)
@@ -103,7 +104,7 @@ class QuestionParserTest {
 
         // Assert failure when parsing this as a coding question
         assertFailsWith<QuestionParsingException> {
-            parser.parseCodingDirectory(mdFile1.parentFile)
+            parser.parseFile(mdFile1.parentFile)
         }
     }
 
@@ -122,7 +123,7 @@ class QuestionParserTest {
 
         // Assert an error is thrown
         assertFailsWith<QuestionParsingException> {
-            parser.parseCodingDirectory(codeFile.parentFile)
+            parser.parseFile(codeFile.parentFile)
         }
     }
 
@@ -142,9 +143,10 @@ class QuestionParserTest {
             - [ ] vBoth are FIFO.
             - [ ] Both are LIFO.
         """.trimIndent()
-        val inputReader = StringReader(input)
-
-        val question = parser.parse(inputReader, "questionFileWithId_qid12.md") as MultipleChoiceQuestion
+        val mdFile1 = tempDir.resolve("mcQuestion_qid12.md").toFile().apply {
+            writeText(input)
+        }
+        val question = parser.parseFile(mdFile1) as MultipleChoiceQuestion
 
         assertEquals("What is the difference between a stack and a queue?", question.description)
         assertEquals(4, question.options.size)
@@ -172,8 +174,10 @@ class QuestionParserTest {
             - [ ] Monolithic architecture is easier to maintain than microservices.
             - [ ] Test.
         """.trimIndent()
-        val inputReader = StringReader(input)
-        val question = parser.parse(inputReader, "exampleQuestionWithNoID") as MultipleChoiceQuestion
+        val inputFile = tempDir.resolve("testFileName").toFile().apply {
+            writeText(input)
+        }
+        val question = parser.parseFile(inputFile) as MultipleChoiceQuestion
 
         assertEquals(
             "Why does the monolithic architecture not eat the microservice oriented architecture?",
@@ -194,9 +198,10 @@ class QuestionParserTest {
             ---
             What is the difference between a stack and a queue?
         """.trimIndent()
-        val inputReader = StringReader(input)
-
-        val question = parser.parse(inputReader, "sampleQuestionWithNoId") as OpenQuestion
+        val inputFile = tempDir.resolve("filename").toFile().apply {
+            writeText(input)
+        }
+        val question = parser.parseFile(inputFile) as OpenQuestion
 
         assertEquals("What is the difference between a stack and a queue?", question.description)
     }
