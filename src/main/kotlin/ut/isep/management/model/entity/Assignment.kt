@@ -1,6 +1,7 @@
 package ut.isep.management.model.entity
 
 import jakarta.persistence.*
+import parser.QuestionIDUtil
 import java.io.File
 import java.util.*
 
@@ -22,9 +23,9 @@ open class Assignment(
             ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $baseFilePath")
 
     val filePathWithId: String
-        get() = if (id == 0L) throw IllegalStateException() else
-            // TODO() replace with call to QuestionIDUtil.injectQuestionID
-            baseFilePath!!.substringBeforeLast(".md") + "_qid$id.md"
+        get() = if (id == 0L || baseFilePath == null) throw IllegalStateException("Can't get filePathWithId for " +
+                "likely detached entity with id: $id and baseFilePath $baseFilePath") else
+            QuestionIDUtil.injectQuestionID(baseFilePath, id)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
