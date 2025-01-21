@@ -7,8 +7,7 @@ import java.io.FileInputStream
 
 
 class QuestionParser(
-    private val config: Config,
-    private val frontmatterParser: FrontmatterParser = FrontmatterParser(config)
+    private val frontmatterParser: FrontmatterParser = FrontmatterParser()
 ) {
 
     /**
