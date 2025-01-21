@@ -6,17 +6,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.Reader
 
 
-class TagValidator(private val config: Config) {
-    fun validate(tags: List<String>) {
-        tags.forEach { tag ->
-            if (tag.lowercase() !in config.tagOptions.map(String::lowercase))
-            { throw QuestionParsingException("Invalid tag provided: $tag is not present in config file")
-            }
-        }
-    }
-}
-
-
 class FrontmatterParser(private val validator: TagValidator? = null) {
     private val objectMapper = ObjectMapper(YAMLFactory())
 
