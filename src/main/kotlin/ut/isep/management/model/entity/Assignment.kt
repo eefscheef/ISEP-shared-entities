@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import parser.QuestionIDUtil
 import java.io.File
-import java.util.*
 
 @Entity
 open class Assignment(

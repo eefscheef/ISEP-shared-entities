@@ -8,5 +8,10 @@ open class SolvedAssignmentCoding(
     id: SolvedAssignmentId = SolvedAssignmentId(),
     invite: Invite? = null,
     assignment: Assignment? = null,
+
+    @Column(columnDefinition = "text")
     open var userCode: String = "",
+
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "solvedAssignmentCoding")
+    open var testResults: MutableList<TestResult> = mutableListOf(),
 ) : SolvedAssignment(id, invite, assignment)

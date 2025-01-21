@@ -3,6 +3,7 @@ package ut.isep.management.model.entity
 import enumerable.InviteStatus
 import jakarta.persistence.*
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 @Entity
@@ -22,12 +23,16 @@ open class Invite(
     )
     open var assessment: Assessment? = null,
 
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "invite_id")
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "invite")
     open var solutions: MutableList<SolvedAssignment> = mutableListOf(),
 
-    open val invitedAt: OffsetDateTime = OffsetDateTime.now(),
-    open var expiresAt: OffsetDateTime = invitedAt.plusWeeks(1),
+    open val invitedAt: OffsetDateTime = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC),
+    open var expiresAt: OffsetDateTime = invitedAt.plusWeeks(1).withHour(23).withMinute(59).withSecond(59).withNano(0),
+    open var assessmentStartedAt: OffsetDateTime? = null,
+    open var assessmentFinishedAt: OffsetDateTime? = null,
+
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "invite")
+    open var measuredSecondsPerSection: MutableList<TimingPerSection> = mutableListOf(),
 
     open var status: InviteStatus = InviteStatus.not_started,
 
@@ -38,10 +43,21 @@ open class Invite(
         }.toMutableList()
     }
 
+    fun initializeMeasuredSecondsPerSection() {
+        measuredSecondsPerSection = assessment!!.sections.map { section ->
+            createMeasuredTimeSection(section, this)
+        }.toMutableList()
+    }
+
     companion object {
-        fun createInvite(applicant: Applicant, assessment: Assessment): Invite {
-            val invite = Invite(applicant = applicant, assessment = assessment)
+        fun createInvite(applicant: Applicant, assessment: Assessment, expiresAt: OffsetDateTime? = null): Invite {
+            val invite: Invite = if (expiresAt != null) {
+                Invite(applicant = applicant, assessment = assessment, expiresAt = expiresAt)
+            } else {
+                Invite(applicant = applicant, assessment = assessment)
+            }
             invite.initializeSolutions()
+            invite.initializeMeasuredSecondsPerSection()
             return invite
         }
     }
@@ -54,4 +70,8 @@ private fun createSolvedAssignment(assignment: Assignment, invite: Invite): Solv
         AssignmentType.MULTIPLE_CHOICE -> SolvedAssignmentMultipleChoice(assignment = assignment, invite = invite)
         else -> throw UnsupportedOperationException("Unsupported assignment type: ${assignment::class}")
     }
+}
+
+private fun createMeasuredTimeSection(section: Section, invite: Invite): TimingPerSection {
+    return TimingPerSection(section = section, invite = invite)
 }
