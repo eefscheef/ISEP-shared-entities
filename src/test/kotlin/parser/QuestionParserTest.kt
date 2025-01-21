@@ -33,6 +33,7 @@ class QuestionParserTest {
                 tags:
                   - Backend Developer
                   - Java
+                language: Java
                 code: HelloWorld.java
                 test: HelloWorldTest.java
                 secret-test: HelloWorldSecretTest.java

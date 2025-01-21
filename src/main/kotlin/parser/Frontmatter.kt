@@ -3,14 +3,15 @@ package parser
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import ut.isep.management.model.entity.Assignment
 import ut.isep.management.model.entity.AssignmentType
 
 
 data class Frontmatter @JsonCreator constructor(
     @JsonProperty("type") val type: AssignmentType,
     @JsonProperty("tags") val tags: List<String>,
-    @JsonProperty("availablePoints") val availablePoints: Int = 1,
+    @JsonProperty("points") val availablePoints: Int = 1,
+    @JsonProperty("seconds") val availableSeconds: Int = 240,
+    @JsonProperty("language") val language: String?,
     @JsonProperty("code") val codeFilename: String?,
     @JsonProperty("test") val testFilename: String?,
     @JsonProperty("secret-test") val secretTestFilename: String?
@@ -25,12 +26,12 @@ data class Frontmatter @JsonCreator constructor(
 
     init {
         if (type == AssignmentType.CODING) {
-            require(codeFilename != null && testFilename != null && secretTestFilename != null) {
-                "For a coding assignment .md file, it is necessary to provide the code, test, and secret-test properties"
+            require(codeFilename != null && testFilename != null && secretTestFilename != null && language != null) {
+                "For a coding assignment .md file, it is necessary to provide the language, code, test, and secret-test properties"
             }
         } else {
-            require(codeFilename == null && testFilename == null && secretTestFilename == null) {
-                "for a non-coding assignment, there should be no code, test, or secret-test properties provided"
+            require(codeFilename == null && testFilename == null && secretTestFilename == null && language == null) {
+                "for a non-coding assignment, there should be no language, code, test, or secret-test properties provided"
             }
         }
     }
