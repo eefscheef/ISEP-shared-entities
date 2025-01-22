@@ -11,7 +11,9 @@ class FrontmatterParser(private val validator: TagValidator? = null) {
     fun split(input: String): Pair<String, String> {
         val parts = input.split("---", limit = 3).map { it.trim() }.filter { it.isNotEmpty() }
         if (parts.size != 2) {
-            throw QuestionParsingException("Invalid question format. Must contain frontmatter and body.")
+            throw QuestionParsingException("Invalid question format. Must contain frontmatter and body.",
+                context = "Input: ${input.take(100)}\n",
+            )
         }
         val frontmatter = parts[0]
         val body = parts[1]
