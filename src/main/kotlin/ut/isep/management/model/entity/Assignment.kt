@@ -10,22 +10,22 @@ open class Assignment(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Long = 0,
     @Column(nullable = false)
-    val baseFilePath: String? = null,
+    open val baseFilePath: String? = null,
     @Column(nullable = false)
     @Enumerated
-    val assignmentType: AssignmentType? = null,
+    open val assignmentType: AssignmentType? = null,
     @Column(nullable = false)
-    val availablePoints: Int? = null,
+    open val availablePoints: Int? = null,
 ) : BaseEntity<Long> {
 
-    val sectionTitle: String
+    open val sectionTitle: String
         get() = File(baseFilePath!!).parent
             ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $baseFilePath")
 
-    val filePathWithId: String
+    open val filePathWithId: String
         get() = if (id == 0L || baseFilePath == null) throw IllegalStateException("Can't get filePathWithId for " +
                 "likely detached entity with id: $id and baseFilePath $baseFilePath") else
-            QuestionIDUtil.injectQuestionID(baseFilePath, id)
+            QuestionIDUtil.injectQuestionID(baseFilePath!!, id)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

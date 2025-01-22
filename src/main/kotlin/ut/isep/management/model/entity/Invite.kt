@@ -18,8 +18,8 @@ open class Invite(
 
     @ManyToOne
     @JoinColumns(
-        JoinColumn(name = "assessment_tag", referencedColumnName = "tag", nullable = false),
-        JoinColumn(name = "assessment_gitCommitHash", referencedColumnName = "gitCommitHash", nullable = false)
+        JoinColumn(name = "assessment_tag", referencedColumnName = "tag"),
+        JoinColumn(name = "assessment_gitCommitHash", referencedColumnName = "gitCommitHash")
     )
     open var assessment: Assessment? = null,
 
