@@ -40,6 +40,15 @@ open class Assignment(
     override fun hashCode(): Int {
         return listOf(id, baseFilePath, assignmentType, availablePoints).hashCode()
     }
+    /**
+     * @throws SecurityException
+     */
+    @PostPersist
+    fun updateAssignmentFilename() {
+        val existingFile = File(baseFilePath!!)
+        val newFilename = filePathWithId
+        existingFile.renameTo(File(newFilename))
+    }
 }
 
 enum class AssignmentType {
