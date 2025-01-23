@@ -23,8 +23,10 @@ open class Assignment(
             ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $baseFilePath")
 
     open val filePathWithId: String
-        get() = if (id == 0L || baseFilePath == null) throw IllegalStateException("Can't get filePathWithId for " +
-                "likely detached entity with id: $id and baseFilePath $baseFilePath") else
+        get() = if (id == 0L || baseFilePath == null) throw IllegalStateException(
+            "Can't get filePathWithId for " +
+                    "likely detached entity with id: $id and baseFilePath $baseFilePath"
+        ) else
             QuestionIDUtil.injectQuestionID(baseFilePath!!, id)
 
     override fun equals(other: Any?): Boolean {
@@ -40,22 +42,30 @@ open class Assignment(
     override fun hashCode(): Int {
         return listOf(id, baseFilePath, assignmentType, availablePoints).hashCode()
     }
+
     /**
      * @throws SecurityException
+     * @throws NoSuchFileException
      */
     @PostPersist
     fun updateAssignmentFilename() {
         val existingFile = File(baseFilePath!!)
-        val newFilename = filePathWithId
-        existingFile.renameTo(File(newFilename))
+        if (existingFile.exists()) {
+            val newFilename = filePathWithId
+            existingFile.renameTo(File(newFilename))
+        } else {
+            println("Warning: persisting assignment with no backing file. This better be a test") //TODO replace DummyDataLoader by database seeding so we can remove this and always error when there is not backing file to newly persisted assignment
+        }
     }
 }
 
 enum class AssignmentType {
     @JsonProperty("coding")
     CODING,
+
     @JsonProperty("multiple-choice")
     MULTIPLE_CHOICE,
+
     @JsonProperty("open")
     OPEN;
 }
