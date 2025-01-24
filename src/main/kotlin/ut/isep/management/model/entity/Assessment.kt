@@ -14,9 +14,9 @@ open class Assessment(
     override val id: Long = 0,
 
     @Column(nullable = false)
-    val tag: String? = null,
-    @Column(nullable = false)
-    val gitCommitHash: String? = null,
+    open val tag: String? = null,
+
+    open var gitCommitHash: String? = null,
 
     @OneToMany(mappedBy = "assessment", cascade = [CascadeType.ALL])
     open val sections: MutableList<Section> = mutableListOf(),
