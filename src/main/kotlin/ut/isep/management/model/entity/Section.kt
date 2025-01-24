@@ -35,10 +35,7 @@ open class Section(
             throw IllegalArgumentException("Assignment with ID ${assignment.id} is already present in the section.")
         }
     }
-    fun removeAssignmentById(assignmentId: Long) {
-        val removed = assignments.removeIf { it.id == assignmentId }
-        if (!removed) {
-            throw IllegalArgumentException("Assignment with ID $assignmentId not found.")
-        }
+    fun removeAssignmentById(assignmentId: Long): Boolean {
+        return assignments.removeIf { it.id == assignmentId }
     }
 }
