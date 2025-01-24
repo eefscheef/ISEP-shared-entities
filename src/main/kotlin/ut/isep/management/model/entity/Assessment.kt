@@ -1,12 +1,22 @@
 package ut.isep.management.model.entity
 
 import jakarta.persistence.*
-import java.io.Serializable
 
+@Table(
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["tag", "gitCommitHash"]),
+        UniqueConstraint(columnNames = ["tag", "latest"]),
+    ]
+)
 @Entity
 open class Assessment(
-    @EmbeddedId
-    override val id: AssessmentID = AssessmentID(),
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    override val id: Long = 0,
+
+    @Column(nullable = false)
+    val tag: String? = null,
+    @Column(nullable = false)
+    val gitCommitHash: String? = null,
 
     @OneToMany(mappedBy = "assessment", cascade = [CascadeType.ALL])
     open val sections: MutableList<Section> = mutableListOf(),
@@ -14,9 +24,14 @@ open class Assessment(
     @OneToMany(mappedBy = "assessment", cascade = [CascadeType.ALL], orphanRemoval = true)
     open val invites: MutableList<Invite> = mutableListOf(),
 
-    open var latest: Boolean = false
+    @Column(nullable = true)
+    open var latest: Boolean? = null
 
-): BaseEntity<AssessmentID> {
+) : BaseEntity<Long> {
+
+    val isLatest: Boolean
+        get() = latest ?: false
+
     val availablePoints: Int
         get() = sections.sumOf { it.availablePoints }
 
@@ -33,13 +48,4 @@ open class Assessment(
             section.assessment = null
         }
     }
-
 }
-
-@Embeddable
-data class AssessmentID(
-    @Column(nullable = false)
-    val tag: String? = null,
-    @Column(nullable = false)
-    val gitCommitHash: String? = null,
-) : Serializable

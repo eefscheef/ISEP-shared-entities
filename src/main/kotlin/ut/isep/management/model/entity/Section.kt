@@ -10,10 +10,7 @@ open class Section(
     open var title: String? = null,
 
     @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "assessment_tag", referencedColumnName = "tag", nullable = false),
-        JoinColumn(name = "assessment_gitCommitHash", referencedColumnName = "gitCommitHash", nullable = false)
-    )
+    @JoinColumn(name = "assessment_id", nullable = false)
     open var assessment: Assessment? = null,
 
     @ManyToMany(cascade = [CascadeType.ALL])

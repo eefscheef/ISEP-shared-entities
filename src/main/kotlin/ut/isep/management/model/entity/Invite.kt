@@ -17,10 +17,7 @@ open class Invite(
     open var applicant: Applicant? = null,
 
     @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "assessment_tag", referencedColumnName = "tag"),
-        JoinColumn(name = "assessment_gitCommitHash", referencedColumnName = "gitCommitHash")
-    )
+    @JoinColumn(name = "assessment_id", nullable = false)
     open var assessment: Assessment? = null,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "invite")
