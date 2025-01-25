@@ -54,6 +54,8 @@ class QuestionParser(
                 id = metadata.id,
                 tags = metadata.tags,
                 filePath = metadata.originalFilePath,
+                availablePoints = metadata.availablePoints,
+                availableSeconds = metadata.availableSeconds,
                 description = body,
                 code = code,
                 testCode = test,
@@ -86,6 +88,8 @@ class QuestionParser(
             id = metadata.id,
             tags = metadata.tags,
             filePath = metadata.originalFilePath,
+            availablePoints = metadata.availablePoints,
+            availableSeconds = metadata.availableSeconds,
             description = description,
             options = options
         )
@@ -96,6 +100,8 @@ class QuestionParser(
             id = metadata.id,
             tags = metadata.tags,
             filePath = metadata.originalFilePath,
+            availablePoints = metadata.availablePoints,
+            availableSeconds = metadata.availableSeconds,
             description = body
         )
     }

@@ -6,10 +6,9 @@ import org.junit.jupiter.api.io.TempDir
 import parser.question.CodingQuestion
 import parser.question.MultipleChoiceQuestion
 import parser.question.OpenQuestion
+import ut.isep.management.model.entity.AssignmentType
 import java.nio.file.Path
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class QuestionParserTest {
 
@@ -33,6 +32,8 @@ class QuestionParserTest {
                 tags:
                   - Backend Developer
                   - Java
+                points: 1
+                seconds: 10
                 language: Java
                 code: HelloWorld.java
                 test: HelloWorldTest.java
@@ -66,6 +67,7 @@ class QuestionParserTest {
         assertEquals(testCode, codingQuestion.testCode.code)
         assertEquals("HelloWorldSecretTest.java", codingQuestion.secretTestCode.filename)
         assertEquals(secretTestCode, codingQuestion.secretTestCode.code)
+        println("Seconds: " + codingQuestion.availableSeconds)
     }
 
     @Test
@@ -77,6 +79,8 @@ class QuestionParserTest {
                 type: coding
                 tags:
                   - Backend Developer
+                points: 1
+                seconds: 600
                 code: HelloWorld.java
                 test: HelloWorldTest.java
                 secret-test: HelloWorldSecretTest.java
@@ -90,6 +94,8 @@ class QuestionParserTest {
                 type: coding
                 tags:
                   - Backend Developer
+                points: 1
+                seconds: 600
                 code: HelloWorld.java
                 test: HelloWorldTest.java
                 secret-test: HelloWorldSecretTest.java
@@ -125,12 +131,16 @@ class QuestionParserTest {
 
     @Test
     fun `test parsing single answer multiple-choice question`() {
+        val points = 2
+        val seconds = 13L
         val input = """
             ---
             type: multiple-choice
             tags:
               - Frontend Developer
               - Backend Developer
+            points: $points
+            seconds: $seconds
             ---
             What is the difference between a stack and a queue?
             
@@ -147,12 +157,16 @@ class QuestionParserTest {
         assertEquals("What is the difference between a stack and a queue?", question.description)
         assertEquals(4, question.options.size)
         assertEquals(12, question.id)
+        assertEquals(points, question.availablePoints)
+        assertEquals(seconds, question.availableSeconds)
         assertTrue(question.options.any { it.text == "A stack is LIFO, a queue is FIFO." && it.isCorrect })
         assertTrue(question.options.filter { it.isCorrect }.size == 1)
     }
 
     @Test
     fun `test parsing multiple answers multiple-choice question`() {
+        val points = 3
+        val seconds = 2213L
         val input = """
             ---
             type: multiple-choice
@@ -160,6 +174,8 @@ class QuestionParserTest {
             tags:
             - Backend Developer
             - System Design
+            points: $points
+            seconds: $seconds
             ---
             
             Why does the monolithic architecture not eat the microservice oriented architecture?
@@ -174,7 +190,8 @@ class QuestionParserTest {
             writeText(input)
         }
         val question = parser.parseFile(inputFile) as MultipleChoiceQuestion
-
+        assertEquals(points, question.availablePoints)
+        assertEquals(seconds, question.availableSeconds)
         assertEquals(
             "Why does the monolithic architecture not eat the microservice oriented architecture?",
             question.description
@@ -186,11 +203,15 @@ class QuestionParserTest {
 
     @Test
     fun `test parsing open question`() {
+        val points = 1
+        val seconds = 600L
         val input = """
             ---
             type: open
             tags: 
               - Deezveloper
+            points: $points
+            seconds: $seconds
             ---
             What is the difference between a stack and a queue?
         """.trimIndent()
@@ -198,7 +219,9 @@ class QuestionParserTest {
             writeText(input)
         }
         val question = parser.parseFile(inputFile) as OpenQuestion
-
+        assertEquals(points, question.availablePoints)
+        assertEquals(seconds, question.availableSeconds)
+        assertEquals(AssignmentType.OPEN, question.type)
         assertEquals("What is the difference between a stack and a queue?", question.description)
     }
 

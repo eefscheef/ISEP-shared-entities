@@ -7,6 +7,8 @@ data class CodingQuestion(
     override val tags: List<String>,
     override val description: String,
     override val filePath: String,
+    override val availablePoints: Int,
+    override val availableSeconds: Long,
     val code: CodingFile,
     val testCode: CodingFile,
     val secretTestCode: CodingFile,

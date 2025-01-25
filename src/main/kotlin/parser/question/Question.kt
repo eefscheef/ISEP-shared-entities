@@ -9,6 +9,8 @@ sealed interface Question {
     val type: AssignmentType
     val tags: List<String>
     val description: String
+    val availablePoints: Int
+    val availableSeconds: Long
 
     fun toEntity(): Assignment {
         return id?.let {id ->

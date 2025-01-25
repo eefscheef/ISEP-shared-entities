@@ -7,10 +7,10 @@ import ut.isep.management.model.entity.AssignmentType
 
 
 data class Frontmatter @JsonCreator constructor(
-    @JsonProperty("type") val type: AssignmentType,
-    @JsonProperty("tags") val tags: List<String>,
-    @JsonProperty("points") val availablePoints: Int = 1,
-    @JsonProperty("seconds") val availableSeconds: Int = 240,
+    @JsonProperty("type", required = true) val type: AssignmentType,
+    @JsonProperty("tags", required = true) val tags: List<String>,
+    @JsonProperty("points", required = true) val availablePoints: Int,
+    @JsonProperty("seconds", required = true) val availableSeconds: Long,
     @JsonProperty("language") val language: String?,
     @JsonProperty("code") val codeFilename: String?,
     @JsonProperty("test") val testFilename: String?,
@@ -25,6 +25,9 @@ data class Frontmatter @JsonCreator constructor(
 
 
     init {
+        require(availablePoints > 0) {"Assignments must be worth at least 1 point"}
+        require(availableSeconds > 0) {"Recommended assignment time must be at least 1 second"}
+
         if (type == AssignmentType.CODING) {
             require(codeFilename != null && testFilename != null && secretTestFilename != null && language != null) {
                 "For a coding assignment .md file, it is necessary to provide the language, code, test, and secret-test properties"

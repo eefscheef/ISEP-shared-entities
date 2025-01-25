@@ -7,6 +7,8 @@ data class MultipleChoiceQuestion(
     override val filePath: String,
     override val tags: List<String>,
     override val description: String,
+    override val availablePoints: Int,
+    override val availableSeconds: Long,
     val options: List<Option>
 ) : Question {
     override val type: AssignmentType = AssignmentType.MULTIPLE_CHOICE
