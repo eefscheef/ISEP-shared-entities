@@ -32,6 +32,9 @@ open class Assessment(
     val isLatest: Boolean
         get() = latest ?: false
 
+    val availableSeconds: Long
+        get() = sections.sumOf { it.availableSeconds }
+
     val availablePoints: Int
         get() = sections.sumOf { it.availablePoints }
 
