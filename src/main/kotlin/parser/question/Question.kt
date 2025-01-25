@@ -14,7 +14,7 @@ sealed interface Question {
 
     fun toEntity(): Assignment {
         return id?.let {id ->
-            Assignment(id = id, baseFilePath = filePath, assignmentType = type, availablePoints = 1) //TODO pass through availablepoints
-        } ?: Assignment(baseFilePath = filePath, assignmentType = type, availablePoints = 1)
+            Assignment(id = id, baseFilePath = filePath, assignmentType = type, availablePoints = availablePoints, availableSeconds = availableSeconds)
+        } ?: Assignment(baseFilePath = filePath, assignmentType = type, availablePoints = availablePoints, availableSeconds = availableSeconds)
     }
 }
