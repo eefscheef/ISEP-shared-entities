@@ -16,6 +16,8 @@ open class Assignment(
     open val assignmentType: AssignmentType? = null,
     @Column(nullable = false)
     open val availablePoints: Int? = null,
+    @Column(nullable = false)
+    open var availableSeconds: Long? = null,
 ) : BaseEntity<Long> {
 
     open val sectionTitle: String
