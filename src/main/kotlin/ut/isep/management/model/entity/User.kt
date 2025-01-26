@@ -11,6 +11,8 @@ open class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: Long = 0,
+    @Column(nullable = false, unique = true)
+    open var oid: String? = null, // comes from Microsoft Azure
     @Column(nullable = false)
     open val createdAt: OffsetDateTime = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC),
     @Column(nullable = false)
