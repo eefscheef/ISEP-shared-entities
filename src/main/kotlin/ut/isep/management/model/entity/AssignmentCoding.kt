@@ -21,6 +21,8 @@ class AssignmentCoding(
 
     @Column(nullable = true, columnDefinition = "text")
     var startingCode: String? = null,
+    @Column(nullable = true, columnDefinition = "text")
+    var startingTest: String? = null,
 
     @Column(nullable = true, columnDefinition = "text")
     var referenceAnswer: String? = null,
