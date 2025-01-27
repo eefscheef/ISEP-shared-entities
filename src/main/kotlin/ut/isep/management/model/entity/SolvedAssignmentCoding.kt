@@ -10,10 +10,10 @@ open class SolvedAssignmentCoding(
     assignment: Assignment? = null,
 
     @Column(columnDefinition = "text")
-    open var userCode: String = "",
+    open var userCode: String? = null,
 
     @Column(columnDefinition = "text")
-    open var testCode: String = "",
+    open var testCode: String? = null,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "solvedAssignmentCoding")
     open var testResults: MutableList<TestResult> = mutableListOf(),
