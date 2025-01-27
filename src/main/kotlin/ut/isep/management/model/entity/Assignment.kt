@@ -1,6 +1,7 @@
 package ut.isep.management.model.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonValue
 import jakarta.persistence.*
 import parser.QuestionIDUtil
 import java.io.File
@@ -61,13 +62,8 @@ open class Assignment(
     }
 }
 
-enum class AssignmentType {
-    @JsonProperty("coding")
-    CODING,
-
-    @JsonProperty("multiple-choice")
-    MULTIPLE_CHOICE,
-
-    @JsonProperty("open")
-    OPEN;
+enum class AssignmentType(@JsonValue val type: String) {
+    @JsonProperty("coding") CODING("coding"),
+    @JsonProperty("multiple-choice") MULTIPLE_CHOICE("multiple-choice"),
+    @JsonProperty("open") OPEN("open");
 }
