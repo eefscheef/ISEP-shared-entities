@@ -21,7 +21,7 @@ open class Assignment(
 ) : BaseEntity<Long> {
 
     open val sectionTitle: String
-        get() = File(baseFilePath!!).parentFile.name
+        get() = File(baseFilePath!!).parentFile?.name
             ?: throw IllegalStateException("Can't find parent directory of Assignment $id with filePath $baseFilePath")
 
     open val filePathWithId: String
