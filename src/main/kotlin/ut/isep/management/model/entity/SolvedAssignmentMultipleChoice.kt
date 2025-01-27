@@ -1,6 +1,8 @@
 package ut.isep.management.model.entity
 
-import jakarta.persistence.*
+import jakarta.persistence.DiscriminatorValue
+import jakarta.persistence.ElementCollection
+import jakarta.persistence.Entity
 
 @Entity
 @DiscriminatorValue("SOLVED_MULTIPLE_CHOICE")
@@ -9,5 +11,5 @@ open class SolvedAssignmentMultipleChoice(
     invite: Invite? = null,
     assignment: Assignment? = null,
     @ElementCollection
-    open var userOptionsMarkedCorrect: List<Int> = listOf(),
+    open var userOptionsMarkedCorrect: List<String> = listOf(),
 ) : SolvedAssignment(id, invite, assignment)
