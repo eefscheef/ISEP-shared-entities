@@ -39,7 +39,7 @@ class OpenFrontmatter @JsonCreator constructor(
     @JsonProperty("tags", required = true) tags: List<String>,
     @JsonProperty("points", required = true) availablePoints: Int,
     @JsonProperty("seconds", required = true) availableSeconds: Long,
-    @JsonProperty("referenceAnswer", required = false) val referenceAnswer: String? = null
+    @JsonProperty("reference-answer", required = false) val referenceAnswer: String? = null
 ) : Frontmatter(type, tags, availablePoints, availableSeconds) {
     init {
         require(type == AssignmentType.OPEN)
