@@ -22,6 +22,12 @@ open class Section(
     open val assignments: MutableList<Assignment> = mutableListOf()
 ) : BaseEntity<Long> {
 
+    val availableSeconds: Long
+        get() = assignments.sumOf {
+            it.availableSeconds
+                ?: throw IllegalStateException("Some assignments of this section have null availableSeconds")
+        }
+
     val availablePoints: Int
         get() = assignments.sumOf {
             it.availablePoints
