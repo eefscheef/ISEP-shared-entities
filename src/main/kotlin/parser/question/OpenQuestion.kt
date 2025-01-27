@@ -9,6 +9,7 @@ data class OpenQuestion(
     override val filePath: String,
     override val availablePoints: Int,
     override val availableSeconds: Long,
+    val referenceAnswer: String?
 ) : Question {
     override val type: AssignmentType = AssignmentType.OPEN
 }

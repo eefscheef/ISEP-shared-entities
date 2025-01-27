@@ -1,7 +1,6 @@
 package parser
 
 import parser.question.*
-import ut.isep.management.model.entity.AssignmentType
 import java.io.File
 
 
@@ -16,13 +15,13 @@ class QuestionParser(
         try {
             val content = questionFile.readText()
             val (metadata, body) = frontmatterParser.parse(content, questionFile.path)
-            return when (metadata.type) {
-                AssignmentType.MULTIPLE_CHOICE -> parseMultipleChoiceQuestion(body, metadata)
-                AssignmentType.OPEN -> parseOpenQuestion(body, metadata)
-                AssignmentType.CODING -> {
-                    val (code, test, secretTest) = parseCodingDir(questionFile.parentFile, metadata)
-                    parseCodingQuestion(code, test, secretTest, body, metadata)
+            return when (metadata) {
+                is OpenFrontmatter -> parseOpenQuestion(body, metadata)
+                is CodingFrontmatter -> {
+                    val codeFiles = parseCodingDir(questionFile.parentFile, metadata)
+                    parseCodingQuestion(codeFiles, body, metadata)
                 }
+                else -> { parseMultipleChoiceQuestion(body, metadata) }
             }
         } catch (e: Exception) {
             throw QuestionParsingException(
@@ -33,7 +32,7 @@ class QuestionParser(
         }
     }
 
-    private fun parseCodingDir(codingDir: File, metadata: Frontmatter): Triple<CodingFile, CodingFile, CodingFile> {
+    private fun parseCodingDir(codingDir: File, metadata: CodingFrontmatter): CodeQuestionFiles {
         val mdFiles: Array<File>? = codingDir.listFiles { file -> file.extension == "md" }
         requireNotNull(mdFiles) {
             "Failed to list files in directory: ${codingDir.absolutePath}"
@@ -41,14 +40,16 @@ class QuestionParser(
         require(mdFiles.size == 1) {
             "Must provide exactly one description markdown file per coding question directory. Found ${mdFiles.size} files."
         }
-        val codeFile = CodingFile(metadata.codeFilename!!, codingDir.resolve(metadata.codeFilename).readText())
-        val testFile = CodingFile(metadata.testFilename!!, codingDir.resolve(metadata.testFilename).readText())
+        val codeFile = CodingFile(metadata.codeFilename, codingDir.resolve(metadata.codeFilename).readText())
+        val testFile = CodingFile(metadata.testFilename, codingDir.resolve(metadata.testFilename).readText())
         val secretTestFile =
-            CodingFile(metadata.secretTestFilename!!, codingDir.resolve(metadata.secretTestFilename).readText())
-        return Triple(codeFile, testFile, secretTestFile)
+            CodingFile(metadata.secretTestFilename, codingDir.resolve(metadata.secretTestFilename).readText())
+        val referenceCode = metadata.referenceCodeFilename?.let {CodingFile(it, codingDir.resolve(it).readText())}
+        val referenceTest = metadata.referenceTestFilename?.let {CodingFile(it, codingDir.resolve(it).readText())}
+        return CodeQuestionFiles(codeFile, testFile, secretTestFile, referenceCode, referenceTest)
     }
 
-    fun parseCodingQuestion(code: CodingFile, test: CodingFile, secretTest: CodingFile, body: String, metadata: Frontmatter): CodingQuestion {
+    fun parseCodingQuestion(codeQuestionFiles: CodeQuestionFiles, body: String, metadata: CodingFrontmatter): CodingQuestion {
         try {
             return CodingQuestion(
                 id = metadata.id,
@@ -56,10 +57,9 @@ class QuestionParser(
                 filePath = metadata.originalFilePath,
                 availablePoints = metadata.availablePoints,
                 availableSeconds = metadata.availableSeconds,
+                language = metadata.language,
                 description = body,
-                code = code,
-                testCode = test,
-                secretTestCode = secretTest
+                files = codeQuestionFiles
             )
         } catch (e: Exception) {
             throw QuestionParsingException(
@@ -95,14 +95,15 @@ class QuestionParser(
         )
     }
 
-    fun parseOpenQuestion(body: String, metadata: Frontmatter): OpenQuestion {
+    fun parseOpenQuestion(body: String, metadata: OpenFrontmatter): OpenQuestion {
         return OpenQuestion(
             id = metadata.id,
             tags = metadata.tags,
             filePath = metadata.originalFilePath,
             availablePoints = metadata.availablePoints,
             availableSeconds = metadata.availableSeconds,
-            description = body
+            description = body,
+            referenceAnswer = metadata.referenceAnswer
         )
     }
 }

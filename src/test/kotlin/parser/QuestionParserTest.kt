@@ -61,12 +61,12 @@ class QuestionParserTest {
         // Assert the parsed data equals the written data
         assertEquals("This is a description for a coding question.", codingQuestion.description)
         assertEquals(2, codingQuestion.tags.size)
-        assertEquals("HelloWorld.java", codingQuestion.code.filename)
-        assertEquals(code, codingQuestion.code.code)
-        assertEquals("HelloWorldTest.java", codingQuestion.testCode.filename)
-        assertEquals(testCode, codingQuestion.testCode.code)
-        assertEquals("HelloWorldSecretTest.java", codingQuestion.secretTestCode.filename)
-        assertEquals(secretTestCode, codingQuestion.secretTestCode.code)
+        assertEquals("HelloWorld.java", codingQuestion.files.code.filename)
+        assertEquals(code, codingQuestion.files.code.content)
+        assertEquals("HelloWorldTest.java", codingQuestion.files.test.filename)
+        assertEquals(testCode, codingQuestion.files.test.content)
+        assertEquals("HelloWorldSecretTest.java", codingQuestion.files.secretTest.filename)
+        assertEquals(secretTestCode, codingQuestion.files.secretTest.content)
         println("Seconds: " + codingQuestion.availableSeconds)
     }
 
