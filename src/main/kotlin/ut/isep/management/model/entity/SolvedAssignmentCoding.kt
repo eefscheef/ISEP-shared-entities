@@ -17,4 +17,7 @@ open class SolvedAssignmentCoding(
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "solvedAssignmentCoding")
     open var testResults: MutableList<TestResult> = mutableListOf(),
+
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "solvedAssignmentCoding")
+    open var secretTestResults: MutableList<TestResult> = mutableListOf(),
 ) : SolvedAssignment(id, invite, assignment)
