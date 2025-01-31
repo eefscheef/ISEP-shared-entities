@@ -19,11 +19,29 @@ open class Section(
         joinColumns = [JoinColumn(name = "section_id")],
         inverseJoinColumns = [JoinColumn(name = "assignment_id")]
     )
-    open val assignments: List<Assignment> = emptyList(),
+    open val assignments: MutableList<Assignment> = mutableListOf()
+) : BaseEntity<Long> {
 
-    @Column(nullable = false)
-    open val availablePoints: Int = assignments.sumOf { it.availablePoints!! },
+    val availableSeconds: Long
+        get() = assignments.sumOf {
+            it.availableSeconds
+                ?: throw IllegalStateException("Some assignments of this section have null availableSeconds")
+        }
 
-    @Column(nullable = false)
-    open val availableSeconds: Long = assignments.sumOf { it.availableSeconds!! }
-) : BaseEntity<Long>
+    val availablePoints: Int
+        get() = assignments.sumOf {
+            it.availablePoints
+                ?: throw IllegalStateException("Some assignments of this section have null availablePoints")
+        }
+
+    fun addAssignment(assignment: Assignment) {
+        if (!assignments.contains(assignment)) {
+            assignments.add(assignment)
+        } else {
+            throw IllegalArgumentException("Assignment with ID ${assignment.id} is already present in the section.")
+        }
+    }
+    fun removeAssignmentById(assignmentId: Long): Boolean {
+        return assignments.removeIf { it.id == assignmentId }
+    }
+}
